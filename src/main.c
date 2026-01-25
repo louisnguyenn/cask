@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include "error.h"
 
 int main()
 {
-    printf("Cask build: OK\n");
+    cask_error_t err = CASK_ERR_IO;
+    printf("Error: %s", cask_strerror(err));
     return 0;
 }
