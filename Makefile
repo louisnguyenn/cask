@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -std=c11 -Wall -Wextra -pedantic -g
-INCLUDE = -Iinclude
+INCLUDE = -I./include
 SRC = src/main.c src/storage.c src/record.c src/error.c
 OBJ = ${SRC:src/%.c=build/%.o}
 
