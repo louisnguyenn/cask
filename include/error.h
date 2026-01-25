@@ -9,4 +9,6 @@ typedef enum
     CASK_ERR_FULL   // storage is full
 } cask_error_t;
 
+const char* cask_strerror(cask_error_t err);
+
 #endif // ERROR_H
