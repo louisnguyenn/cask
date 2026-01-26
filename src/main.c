@@ -1,8 +1,11 @@
 #include "error.h"
 
-int main()
+int main(int argc, char *argv[])
 {
-    cask_error_t err = CASK_ERR_IO;
-    printf("Error: %s", cask_strerror(err));
+    int err = 0;
+    uint32_t max_records = 100;
+
+    err = cask_storage_init("store.bin", 100);  // initalize storage
+    printf("Error: %s", err);
     return 0;
 }

@@ -2,6 +2,8 @@
 #define ERROR_H
 
 #include <stdio.h>
+#include <stdint.h>
+#include <string.h>
 typedef enum
 {
     CASK_OK = 0,    // operation success (0 = success, -1 = error)
