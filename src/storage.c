@@ -26,6 +26,7 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records)
 
         // initalize header
         memset(header.magic, "CSK1", sizeof(char) * MAGIC_STRING_SIZE);
+        header.magic[4] = '\0'; // null terminate
         header.version = CASK_FORMAT_VERSION; // version 1
         header.max_records = max_records;
         header.record_size = sizeof(cask_record_t);
