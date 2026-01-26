@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "error.h"
+#include <stdio.h>
 
 /**
  * define storage file layout 
