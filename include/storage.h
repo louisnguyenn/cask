@@ -1,6 +1,6 @@
 #ifndef STORAGE_H
 #define STORAGE_H
-#define MAGIC_STRING_SIZE 4
+#define MAGIC_STRING_SIZE 5
 #define KEY_SIZE 32
 #define VALUE_SIZE 128
 #define CASK_FORMAT_VERSION 1   // define version

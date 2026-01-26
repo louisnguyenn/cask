@@ -6,8 +6,8 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records)
     cask_header_t header;
     char *key = NULL;
     char *value = NULL;
-    char magic[MAGIC_STRING_SIZE];
-    uint32_t version;
+    long file_size = 0;
+    long pos = 0;
 
     fptr = fopen(filename, "rb"); // open file in read mode (read binary)
 
@@ -25,7 +25,7 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records)
 
         // initalize header
         memcpy(header.magic, "CSK1", sizeof(char) * MAGIC_STRING_SIZE);
-        header.magic[4] = '\0';               // null terminate
+        header.magic[5] = '\0';               // null terminate
         header.version = CASK_FORMAT_VERSION; // version 1
         header.max_records = max_records;
         header.record_size = sizeof(cask_record_t);
@@ -45,19 +45,25 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records)
          * verify magic number
          * verify version
          */
-        fseek(fptr, 0, SEEK_SET); // seek to the beginning of the file
-        fread(&header, sizeof(header), 1, fptr);
+        // get file size
+        fseek(fptr, 0, SEEK_END);
+        file_size = ftell(fptr);
+        if (file_size < max_records) // check if file is big enough to write a header
+        {
+            return CASK_ERR_INVALID_FORMAT;
+        }
+
+        fseek(fptr, 0, SEEK_SET);                // seek to the beginning of the file
+        fread(&header, sizeof(header), 1, fptr); // read struct
 
         // read magic number identifier
-        fread(magic, sizeof(char), MAGIC_STRING_SIZE, fptr);
-        if (strcmp(magic, "CSK1") != 0)
+        if (strcmp(header.magic, "CSK1") != 0)
         {
             return CASK_ERR_INVALID_FORMAT;
         }
 
         // read version
-        fread(&version, sizeof(uint32_t), 1, fptr);
-        if (version != CASK_FORMAT_VERSION)
+        if (header.version != CASK_FORMAT_VERSION)
         {
             return CASK_ERR_INVALID_FORMAT;
         }
