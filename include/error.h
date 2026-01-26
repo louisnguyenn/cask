@@ -1,5 +1,7 @@
 #ifndef ERROR_H
 #define ERROR_H
+
+#include <stdio.h>
 typedef enum
 {
     CASK_OK = 0,    // operation success (0 = success, -1 = error)
