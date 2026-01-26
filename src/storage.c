@@ -6,9 +6,8 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records)
     cask_header_t header;
     char *key = NULL;
     char *value = NULL;
-    long curr_posn, end_posn = 0;
     char magic[MAGIC_STRING_SIZE];
-    uint32_t version = CASK_FORMAT_VERSION;
+    uint32_t version;
 
     fptr = fopen(filename, "rb"); // open file in read mode (read binary)
 
@@ -26,7 +25,7 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records)
 
         // initalize header
         memcpy(header.magic, "CSK1", sizeof(char) * MAGIC_STRING_SIZE);
-        header.magic[4] = '\0'; // null terminate
+        header.magic[4] = '\0';               // null terminate
         header.version = CASK_FORMAT_VERSION; // version 1
         header.max_records = max_records;
         header.record_size = sizeof(cask_record_t);
@@ -38,25 +37,18 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records)
         // write header
         fwrite(&header, sizeof(header), 1, fptr);
     }
-
-    // TODO:
-    /**
-     * CASE 2: if file exists
-     * read header
-     * verify magic number
-     * verify version
-     */
-    // find the end position of the records
-    fseek(fptr, 0, SEEK_END);
-    end_posn = ftell(fptr);
-
-    fseek(fptr, 0, SEEK_SET); // seek back to the beginning of the file
-    while (curr_posn != end_posn)
+    else
     {
+        /**
+         * CASE 2: if file exists
+         * read header
+         * verify magic number
+         * verify version
+         */
+        fseek(fptr, 0, SEEK_SET); // seek to the beginning of the file
         fread(&header, sizeof(header), 1, fptr);
 
         // read magic number identifier
-        fseek(fptr, sizeof(char) * MAGIC_STRING_SIZE, SEEK_SET);
         fread(magic, sizeof(char), MAGIC_STRING_SIZE, fptr);
         if (strcmp(magic, "CSK1") != 0)
         {
@@ -64,14 +56,11 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records)
         }
 
         // read version
-        fseek(fptr, sizeof(uint32_t) + sizeof(char) * MAGIC_STRING_SIZE, SEEK_SET);
         fread(&version, sizeof(uint32_t), 1, fptr);
-        if (version != header.version)
+        if (version != CASK_FORMAT_VERSION)
         {
             return CASK_ERR_INVALID_FORMAT;
         }
-
-        curr_posn = ftell(fptr);
     }
 
     fclose(fptr);
