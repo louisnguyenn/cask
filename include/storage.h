@@ -9,7 +9,6 @@
 #include "error.h"
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
 #include <stdlib.h>
 
 /**
@@ -26,9 +25,9 @@ typedef struct {
  * each record contains the following
  */
 typedef struct {
+    uint32_t in_use;
     char key[KEY_SIZE];
     char value[VALUE_SIZE];
-    bool flag;
 } cask_record_t;
 
 // function prototypes
