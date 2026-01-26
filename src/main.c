@@ -1,7 +1,7 @@
 #include "error.h"
 #include "storage.h"
 
-int main(int argc, char *argv[])
+int main()
 {
     cask_error_t err;
     uint32_t max_records = 100;

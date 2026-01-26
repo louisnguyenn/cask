@@ -7,8 +7,8 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records)
     char *key = NULL;
     char *value = NULL;
     long curr_posn, end_posn = 0;
-    char *magic = NULL;
-    uint32_t version = NULL;
+    char magic[MAGIC_STRING_SIZE];
+    uint32_t version = CASK_FORMAT_VERSION;
 
     fptr = fopen(filename, "rb"); // open file in read mode (read binary)
 
@@ -25,7 +25,7 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records)
             return CASK_ERR_IO; // return err if file could not be created
 
         // initalize header
-        memset(header.magic, "CSK1", sizeof(char) * MAGIC_STRING_SIZE);
+        memcpy(header.magic, "CSK1", sizeof(char) * MAGIC_STRING_SIZE);
         header.magic[4] = '\0'; // null terminate
         header.version = CASK_FORMAT_VERSION; // version 1
         header.max_records = max_records;
@@ -58,7 +58,7 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records)
         // read magic number identifier
         fseek(fptr, sizeof(char) * MAGIC_STRING_SIZE, SEEK_SET);
         fread(magic, sizeof(char), MAGIC_STRING_SIZE, fptr);
-        if (magic != header.magic)
+        if (strcmp(magic, "CSK1") != 0)
         {
             return CASK_ERR_INVALID_FORMAT;
         }
