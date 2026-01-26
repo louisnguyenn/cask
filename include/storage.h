@@ -1,6 +1,6 @@
 #ifndef STORAGE_H
 #define STORAGE_H
-#define MAGIC_STRING_SIZE 5
+#define MAGIC_STRING_SIZE 4
 #define KEY_SIZE 32
 #define VALUE_SIZE 128
 #define CASK_FORMAT_VERSION 1   // define version
@@ -9,12 +9,13 @@
 #include "error.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 /**
  * define storage file layout 
  */
 typedef struct {
-    char magic[MAGIC_STRING_SIZE] = "CSK1";
+    char magic[MAGIC_STRING_SIZE];
     uint32_t version;
     uint32_t max_records;
     uint32_t record_size;
