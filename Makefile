@@ -3,11 +3,12 @@ CFLAGS = -std=c11 -Wall -Wextra -pedantic -g
 INCLUDE = -I./include
 SRC = src/main.c src/storage.c src/record.c src/error.c
 OBJ = ${SRC:src/%.c=build/%.o}
+TARGET = build/cask
 
-all: build/cask
+all: $(TARGET)
 
 build/cask: $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o build/cask
+	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET)
 
 build/%.o: src/%.c
 	@mkdir -p build
@@ -17,6 +18,6 @@ clean:
 	rm -rf build
 
 run: all
-	./build/cask
+	./$(TARGET)
 
 .PHONY: all clean run
