@@ -22,5 +22,6 @@ cask_error_t cask_storage_close()
 
 long cask_record_offset(uint32_t index)
 {
-
+    const offset = sizeof(cask_record_t) + index;
+    return offset;
 }
