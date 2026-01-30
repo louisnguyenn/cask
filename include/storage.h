@@ -27,7 +27,7 @@ typedef struct
  */
 typedef struct
 {
-    uint32_t in_use;        // flag for empty slot to place a new record
+    uint32_t in_use;        // flag for empty slot to place a new record (empty = 0, in-use = 1)
     char key[KEY_SIZE];     // record key ('user1')
     char value[VALUE_SIZE]; // record value (name, username, email, etc.)
 } cask_record_t;
