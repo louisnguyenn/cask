@@ -15,10 +15,10 @@
  * define storage file layout 
  */
 typedef struct {
-    char magic[MAGIC_STRING_SIZE];
-    uint32_t version;
-    uint32_t max_records;
-    uint32_t record_size;
+    char magic[MAGIC_STRING_SIZE];  // file signature (magic number) makes sure it reads the correct file as a database
+    uint32_t version;               // file format version (future-proofing, when changing the record structure)
+    uint32_t max_records;           // max number of records the file supports
+    uint32_t record_size;           // size (in bytes) of one cask_record_t
 }  cask_header_t;
 
 /**
