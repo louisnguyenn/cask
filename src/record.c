@@ -7,6 +7,7 @@ cask_error_t cask_record_put(const char *key, const char *value)
     cask_header_t header;
     uint32_t pos = 0;
     int empty_index = 0;
+    long offset = 0;
 
     fptr = fopen("../data/store.bin", "rb+"); // open in write binary mode
 
@@ -24,7 +25,29 @@ cask_error_t cask_record_put(const char *key, const char *value)
         }
     }
 
-    fseek(fptr, cask_record_offset(empty_index), SEEK_SET); // seek to the empty record
+    // check if no records are found
+    if (empty_index == 0)
+    {
+        return CASK_ERR_FULL;   // return error: db is full
+    }
+
+    offset = cask_record_offset(empty_index);
+    fseek(fptr, offset, SEEK_SET); // seek to the empty record
+
+    if (strlen(key) < KEY_SIZE)
+    {
+        strcpy(record.key, key);
+    }
+
+    if (strlen(value) < VALUE_SIZE)
+    {
+        strcpy(record.value, value);
+    }
+
+    record.in_use = 1; // update flag to tell db that the record is in use
+
+    // write the updated record into the database
+    fwrite(&record, sizeof(record), 1, fptr);
 
     return CASK_OK;
 }
