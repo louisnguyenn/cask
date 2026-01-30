@@ -31,14 +31,39 @@ typedef struct {
 } cask_record_t;
 
 // function prototypes
-
 /**
  * initialize storage function
+ * parameters: filename/name of the database, max number of records
  */
 cask_error_t cask_storage_init(const char *filename, uint32_t max_records);
 
 /**
+ * create record function
+ * parameters: record key, values to put in the record
+ */
+cask_error_t cask_record_put(const char *key, const char *value);
+
+/**
+ * get a record function
+ * parameters: record key, values of the record
+ */
+cask_error_t cask_record_get(const char *key, char *out_value);
+
+/**
+ * delete a record function
+ * parameters: record key
+ */
+cask_error_t cask_record_delete(const char *key);
+
+/**
+ * clean/close the storage function
+ * parameters: none
+ */
+cask_error_t cask_storage_close();
+
+/**
  * HELPER FUNCTION: returns position/offset of a record
+ * parameters: current index
  */
 long cask_record_offset(uint32_t index);
 
