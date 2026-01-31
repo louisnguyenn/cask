@@ -12,8 +12,16 @@ cask_error_t cask_record_put(const char *key, const char *value)
     uint32_t record_size;
 
     fptr = fopen("../data/store.bin", "rb+"); // open in write binary mode
+    if (fptr == NULL)
+    {
+        return CASK_ERR_IO;
+    }
 
-    fread(&header, sizeof(cask_header_t), 1, fptr); // read the header
+    if (fread(&header, sizeof(cask_header_t), 1, fptr) != 1) // read the header
+    {
+        fclose(fptr);
+        return CASK_ERR_IO;
+    }
 
     // read the record
     for (int i = 0; i < header.max_records; i += 1)
@@ -38,38 +46,29 @@ cask_error_t cask_record_put(const char *key, const char *value)
     offset = cask_record_offset(empty_index, header_size, record_size); // calculate offset
     fseek(fptr, offset, SEEK_SET);                                      // seek to the empty record
 
-    // initalize record
-    record.in_use = 0;
-    record.key[0] = '\0';
-    record.value[0] = '\0';
+    // initalize record to 0 bytes
+    memset(&record, 0, sizeof(record));
 
     // update record with new values if applicable
-    if (strlen(key) < KEY_SIZE) // validate key
-
-    {
-        strcpy(record.key, key);
-    }
-    else
+    if (strlen(key) >= KEY_SIZE) // validate key
     {
         fclose(fptr);
         return CASK_ERR_KEY_TOO_LARGE;
     }
 
-    if (strlen(value) < VALUE_SIZE) // validate value
+    if (strlen(value) >= VALUE_SIZE) // validate value
     {
         fclose(fptr);
-        strcpy(record.value, value);
-    }
-    else
-    {
         return CASK_ERR_VALUE_TOO_LARGE;
     }
 
+    strcpy(record.key, key);
+    strcpy(record.value, value);
     record.in_use = 1; // update flag to tell db that the record is in use
 
-    // write the updated record into the database
-    fwrite(&record, sizeof(record), 1, fptr);
-
+    fwrite(&record, header.record_size, 1, fptr); // write the updated record into the database
+    fclose(fptr);
+    
     return CASK_OK;
 }
 
@@ -87,7 +86,7 @@ cask_error_t cask_storage_close()
 
 long cask_record_offset(uint32_t index, uint32_t header_size, uint32_t record_size)
 {
-    long offset = sizeof(header_size) + (index * record_size);
+    long offset = header_size + (index * record_size);
 
     return offset;
 }
