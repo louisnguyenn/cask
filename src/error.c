@@ -21,6 +21,8 @@ const char *cask_strerror(cask_error_t err)
         return "Key is too large";
     case CASK_ERR_VALUE_TOO_LARGE:
         return "Value is too large";
+    case CASK_ERR_INVALID_INPUT:
+        return "Invalid input";
     default:
         return "Unknown error";
     }
