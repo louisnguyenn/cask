@@ -17,6 +17,10 @@ const char *cask_strerror(cask_error_t err)
         return "Invalid file format";
     case CASK_ERR_FULL:
         return "Storage full";
+    case CASK_ERR_KEY_TOO_LARGE:
+        return "Key is too large";
+    case CASK_ERR_VALUE_TOO_LARGE:
+        return "Value is too large";
     default:
         return "Unknown error";
     }
