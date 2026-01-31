@@ -5,7 +5,6 @@ cask_error_t cask_record_put(const char *key, const char *value)
     FILE *fptr;
     cask_record_t record;
     cask_header_t header;
-    uint32_t pos = 0;
     int empty_index = -1;
     long offset = 0;
     uint32_t header_size;
@@ -24,7 +23,7 @@ cask_error_t cask_record_put(const char *key, const char *value)
     }
 
     // read the record
-    for (int i = 0; i < header.max_records; i += 1)
+    for (uint32_t i = 0; i < header.max_records; i += 1)
     {
         fread(&record, header.record_size, 1, fptr);
         if (record.in_use == 0) // look for an empty slot to define a new record with inputted values
@@ -68,7 +67,7 @@ cask_error_t cask_record_put(const char *key, const char *value)
 
     fwrite(&record, header.record_size, 1, fptr); // write the updated record into the database
     fclose(fptr);
-    
+
     return CASK_OK;
 }
 
