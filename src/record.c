@@ -28,7 +28,7 @@ cask_error_t cask_record_put(const char *key, const char *value)
     // check if no records are found
     if (empty_index == 0)
     {
-        return CASK_ERR_FULL;   // return error: db is full
+        return CASK_ERR_FULL; // return error: db is full
     }
 
     offset = cask_record_offset(empty_index);
@@ -37,6 +37,10 @@ cask_error_t cask_record_put(const char *key, const char *value)
     if (strlen(key) < KEY_SIZE)
     {
         strcpy(record.key, key);
+    }
+    else
+    {
+        return 
     }
 
     if (strlen(value) < VALUE_SIZE)
@@ -69,6 +73,7 @@ long cask_record_offset(uint32_t index)
     cask_header_t header;
     cask_record_t record;
 
-    const offset = sizeof(header) + (index * header.record_size);
+    long offset = sizeof(header) + (index * header.record_size);
+
     return offset;
 }
