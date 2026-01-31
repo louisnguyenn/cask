@@ -5,11 +5,9 @@
 #define VALUE_SIZE 128
 #define CASK_FORMAT_VERSION 1 // define version
 
-#include <stdint.h>
 #include "error.h"
-#include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 /**
  * define storage file layout
