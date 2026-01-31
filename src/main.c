@@ -1,6 +1,15 @@
 #include "error.h"
 #include "storage.h"
 
+/**
+ * TODO:
+ * 1. create a "isdigit" function to check if the user input is an integer
+ * if not then return -1 if not successful, then check if the return type is equal to CASK_OK
+ * if it return 0, then it is validated because CASK_OK is equal to 0
+ * if not then inform the user of the error
+ * 
+ * 2. create a new error message in the error and c file to inform the user to initialize the database first before choosing the other options
+ */
 int main()
 {
     cask_error_t err;
@@ -21,9 +30,10 @@ int main()
         printf("Enter your choice: ");
 
         scanf("%d", &input);
-        if (!isdigit(input)) // validate input
+        err = isdigit(input);
+        if (!err) // validate input
         {
-            printf("Error: enter an integer\n");
+            printf("Error: %s", cask_strerror(err));
         }
 
         switch (input)
@@ -32,9 +42,10 @@ int main()
             printf("Enter the number of max records: ");
             scanf("%d", &max_records);
 
-            if (!isdigit(max_records))
+            err = isdigit(max_records);
+            if (!err)
             {
-                printf("Error: enter an integer\n");
+                printf("Error: %s\n", cask_strerror(err));
             }
 
             err = cask_storage_init("../data/store.bin", max_records); // initialize storage
