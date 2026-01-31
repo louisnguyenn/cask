@@ -17,8 +17,7 @@ cask_error_t cask_record_put(const char *key, const char *value)
     for (int i = 0; i < header.max_records; i += 1)
     {
         fread(&record, header.record_size, 1, fptr);
-        // look for an empty slot to define a new record with inputted values
-        if (record.in_use == 0)
+        if (record.in_use == 0) // look for an empty slot to define a new record with inputted values
         {
             empty_index = i;
             break;
@@ -34,18 +33,30 @@ cask_error_t cask_record_put(const char *key, const char *value)
     offset = cask_record_offset(empty_index);
     fseek(fptr, offset, SEEK_SET); // seek to the empty record
 
-    if (strlen(key) < KEY_SIZE)
+    // initalize record
+    record.in_use = 0;
+    record.key[0] = '\0';
+    record.value[0] = '\0';
+
+    // update record with new values if applicable
+    if (strlen(key) < KEY_SIZE) // validate key
+
     {
         strcpy(record.key, key);
     }
     else
     {
-        return 
+        return CASK_ERR_KEY_TOO_LARGE;
     }
 
-    if (strlen(value) < VALUE_SIZE)
+    if (strlen(value) < VALUE_SIZE) // validate value
+
     {
         strcpy(record.value, value);
+    }
+    else
+    {
+        return CASK_ERR_VALUE_TOO_LARGE;
     }
 
     record.in_use = 1; // update flag to tell db that the record is in use
