@@ -6,8 +6,10 @@ cask_error_t cask_record_put(const char *key, const char *value)
     cask_record_t record;
     cask_header_t header;
     uint32_t pos = 0;
-    int empty_index = 0;
+    int empty_index = -1;
     long offset = 0;
+    uint32_t header_size;
+    uint32_t record_size;
 
     fptr = fopen("../data/store.bin", "rb+"); // open in write binary mode
 
@@ -25,13 +27,16 @@ cask_error_t cask_record_put(const char *key, const char *value)
     }
 
     // check if no records are found
-    if (empty_index == 0)
+    if (empty_index == -1)
     {
+        fclose(fptr);
         return CASK_ERR_FULL; // return error: db is full
     }
 
-    offset = cask_record_offset(empty_index);
-    fseek(fptr, offset, SEEK_SET); // seek to the empty record
+    header_size = sizeof(header);
+    record_size = header.record_size;
+    offset = cask_record_offset(empty_index, header_size, record_size); // calculate offset
+    fseek(fptr, offset, SEEK_SET);                                      // seek to the empty record
 
     // initalize record
     record.in_use = 0;
@@ -46,12 +51,13 @@ cask_error_t cask_record_put(const char *key, const char *value)
     }
     else
     {
+        fclose(fptr);
         return CASK_ERR_KEY_TOO_LARGE;
     }
 
     if (strlen(value) < VALUE_SIZE) // validate value
-
     {
+        fclose(fptr);
         strcpy(record.value, value);
     }
     else
@@ -79,12 +85,9 @@ cask_error_t cask_storage_close()
 {
 }
 
-long cask_record_offset(uint32_t index)
+long cask_record_offset(uint32_t index, uint32_t header_size, uint32_t record_size)
 {
-    cask_header_t header;
-    cask_record_t record;
-
-    long offset = sizeof(header) + (index * header.record_size);
+    long offset = sizeof(header_size) + (index * record_size);
 
     return offset;
 }
