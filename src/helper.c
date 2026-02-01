@@ -4,11 +4,20 @@
 /**
  * validate user input
  */
-cask_error_t validate_input(int input)
+cask_error_t validate_input(char *input)
 {
-    if (!isdigit(input))
+    int i = 0;
+
+    input[strlen(input) - 1] = '\0'; // remove newline character
+    while (!(input[i] == '\0'))
     {
-        return CASK_ERR_INVALID_FORMAT;
+        // printf("input: %c", input[i]);
+        if (!isdigit(input[i]))
+        {
+            return CASK_ERR_INVALID_INPUT;
+        }
+
+        i += 1;
     }
 
     return CASK_OK; // success

@@ -2,17 +2,15 @@
 #include "storage.h"
 #include "helper.h"
 #include "cask.h"
+#include <stdlib.h>
 
-/**
- * TODO:
- * 
- */
 int main()
 {
     cask_error_t err;
     uint32_t max_records;
     int input = 0;
     int init_storage_flag = 0;
+    char buffer[100];
 
     do
     {
@@ -26,25 +24,29 @@ int main()
         printf("6. Exit\n\n");
         printf("Enter your choice: ");
 
-        scanf("%d", &input);
-        err = validate_input(input);
+        fgets(buffer, sizeof(buffer), stdin);
+        
+        err = validate_input(buffer);
         if (err != CASK_OK) // validate input
         {
             printf("Error: %s", cask_strerror(err));
         }
 
+        input = atoi(buffer); // convert to integer
+
         switch (input)
         {
         case 1:
             printf("Enter the number of max records: ");
-            scanf("%u", &max_records);
+            fgets(buffer, sizeof(buffer), stdin);
 
-            err = validate_input(max_records);
+            err = validate_input(buffer);
             if (err != CASK_OK)
             {
                 printf("Error: %s\n", cask_strerror(err));
             }
 
+            max_records = atoi(buffer);                                // convert to an integer
             err = cask_storage_init("../data/store.bin", max_records); // initialize storage
 
             if (err != CASK_OK)
@@ -85,6 +87,8 @@ int main()
             }
 
             break;
+        case 6:
+            printf("Exiting...\n");
         }
     } while (input != 6);
 
