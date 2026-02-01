@@ -73,14 +73,84 @@ cask_error_t cask_record_put(const char *key, const char *value)
     return CASK_OK;
 }
 
+/**
+ * TODO: 
+ * 1. create error for record not found
+ * 2. move all the print record information to the main file
+ * 3. test
+ */
 cask_error_t cask_record_get(const char *key, char *out_value)
 {
+    FILE *fptr;
+    cask_header_t header;
+    cask_record_t record;
+    char input;
+    int record_index = -1;
+
+    fptr = fopen("../data/store.bin", "rb+");
+    if (fptr == NULL)
+    {
+        return CASK_ERR_IO;
+    }
+
+    if (fread(&header, sizeof(cask_header_t), 1, fptr) != 1) // read header information
+    {
+        fclose(fptr);
+        return CASK_ERR_IO;
+    }
+
+    // loop through the file to find the record
+    for (uint32_t i = 0; i < header.max_records; i += 1)
+    {
+        fread(&record, header.record_size, 1, fptr);
+        if (strcmp(record.key, key) == 0)
+        {
+            record_index = i;
+            break;
+        }
+    }
+
+    if (record_index == -1)
+    {
+        printf("Record not found\n\n");
+        return CASK_OK;
+    }
+
+    do
+    {
+        printf("Record found! Would you like to see its contents? [Y/n]: ");
+        scanf(" %c", &input);
+
+        if (input == 'Y')
+        {
+            fseek(fptr, sizeof(header) + (record_index * header.record_size), SEEK_SET); // seek to the record
+
+            printf("\n");
+            printf("Record Information:\n");
+            printf("Key: %s\n", record.key);
+            strcpy(out_value, record.value);
+
+            return out_value;
+        }
+        else if (input == 'n')
+        {
+            return CASK_OK;
+        }
+        else
+        {
+            printf("Error: %s\n\n", cask_strerror(7)); // invalid input error
+        }
+    } while (input != 'n');
+
+    return CASK_OK;
 }
 
 cask_error_t cask_record_delete(const char *key)
 {
+    return CASK_OK;
 }
 
 cask_error_t cask_storage_close()
 {
+    return CASK_OK;
 }
