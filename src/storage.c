@@ -1,4 +1,5 @@
 #include "storage.h"
+#include "error.h"
 
 /**
  * initialize storage and check for valid storage if already exists
