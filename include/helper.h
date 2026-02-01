@@ -9,4 +9,9 @@
  */
 long cask_record_offset(uint32_t index, uint32_t header_size, uint32_t record_size);
 
+/**
+ * HELPER FUNCTION: returns a truthy value to validate user input
+ */
+int validate_input(int input);
+
 #endif // HELPER_H
