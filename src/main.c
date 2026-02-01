@@ -6,7 +6,7 @@
 
 /**
  * TODO:
- * 1. fix error printing twice there is an invalid input
+ * 1.
  */
 int main()
 {
@@ -34,14 +34,15 @@ int main()
         err = validate_input(buffer);
         if (err != CASK_OK) // validate input
         {
-            printf("Error: %s", cask_strerror(err));
+            printf("Error: %s\n", cask_strerror(err));
         }
-
-        input = atoi(buffer);       // convert to integer
-        if (input > 6 || input < 1) // check if input is in the range
+        else
         {
-            printf("Error: %s\n", cask_strerror(7)); // return invalid input err
-            printf("\n");
+            input = atoi(buffer);       // convert to integer
+            if (input > 6 || input < 1) // check if input is in the range
+            {
+                printf("Error: %s\n\n", cask_strerror(7)); // return invalid input err
+            }
         }
 
         switch (input)
@@ -49,18 +50,16 @@ int main()
         case 1:
             if (init_storage_flag == 1) // check if storage has already been initialized
             {
-                printf("Error: Storage already initialized\n");
-                printf("\n");
+                printf("Error: Storage already initialized\n\n");
                 break;
             }
 
             fptr = fopen("../data/store.bin", "rb+");
             if (fptr != NULL) // check if storage already exists
             {
-                printf("Error: Storage already exists\n");
+                printf("Error: Storage already exists\n\n");
                 init_storage_flag = 1;
                 fclose(fptr);
-                printf("\n");
                 break;
             }
 
@@ -91,8 +90,32 @@ int main()
         case 2:
             if (init_storage_flag != 1)
             {
-                printf("Error: %s\n", cask_strerror(8));
+                printf("Error: %s\n\n", cask_strerror(8));
+                break;
             }
+
+            printf("Enter key (max 31 chars): ");
+            fgets(buffer, sizeof(buffer), stdin);
+
+            char key[KEY_SIZE];
+            strcpy(key, buffer);
+            key[strlen(key) - 1] = '\0';
+
+            printf("Enter value (max 127 chars): ");
+            fgets(buffer, sizeof(buffer), stdin);
+
+            char value[VALUE_SIZE];
+            strcpy(value, buffer);
+            value[strlen(value) - 1] = '\0';
+
+            err = cask_record_put(key, value);
+            if (err != CASK_OK)
+            {
+                printf("Error: %s\n", cask_strerror(err));
+                break;
+            }
+
+            printf("Record created successfully\n");
 
             printf("\n");
             break;
