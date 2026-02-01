@@ -2,6 +2,7 @@
 #define HELPER_H
 
 #include <stdint.h>
+#include <ctype.h>
 
 /**
  * HELPER FUNCTION: returns position/offset of a record
