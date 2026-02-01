@@ -1,5 +1,6 @@
 #include "storage.h"
 #include "error.h"
+#include "helper.h"
 
 cask_error_t cask_record_put(const char *key, const char *value)
 {
@@ -82,11 +83,4 @@ cask_error_t cask_record_delete(const char *key)
 
 cask_error_t cask_storage_close()
 {
-}
-
-long cask_record_offset(uint32_t index, uint32_t header_size, uint32_t record_size)
-{
-    long offset = header_size + (index * record_size);
-
-    return offset;
 }
