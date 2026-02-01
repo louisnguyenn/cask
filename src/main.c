@@ -1,6 +1,7 @@
 #include "error.h"
 #include "storage.h"
 #include "helper.h"
+#include "cask.h"
 
 /**
  * TODO:
@@ -36,7 +37,7 @@ int main()
         {
         case 1:
             printf("Enter the number of max records: ");
-            scanf("%d", &max_records);
+            scanf("%u", &max_records);
 
             err = validate_input(max_records);
             if (err != CASK_OK)
@@ -59,28 +60,28 @@ int main()
         case 2:
             if (init_storage_flag != 1)
             {
-                printf("Error: initalize database first\n");
+                printf("Error: %s\n", cask_strerror(8));
             }
 
             break;
         case 3:
             if (init_storage_flag != 1)
             {
-                printf("Error: initalize database first\n");
+                printf("Error: %s\n", cask_strerror(8));
             }
 
             break;
         case 4:
             if (init_storage_flag != 1)
             {
-                printf("Error: initalize database first\n");
+                printf("Error: %s\n", cask_strerror(8));
             }
 
             break;
         case 5:
             if (init_storage_flag != 1)
             {
-                printf("Error: initalize database first\n");
+                printf("Error: %s\n", cask_strerror(8));
             }
 
             break;
