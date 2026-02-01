@@ -23,6 +23,8 @@ const char *cask_strerror(cask_error_t err)
         return "Value is too large";
     case CASK_ERR_INVALID_INPUT:
         return "Invalid input";
+    case CASK_ERR_INIT_STORAGE:
+        return "Database not initialized";
     default:
         return "Unknown error";
     }
