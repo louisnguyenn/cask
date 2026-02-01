@@ -9,8 +9,6 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records)
 {
     FILE *fptr;
     cask_header_t header;
-    unsigned long file_size = 0;
-    long pos = 0;
 
     fptr = fopen(filename, "rb+"); // open file in read mode (read binary)
 
@@ -55,7 +53,7 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records)
          */
         // get file size
         fseek(fptr, 0, SEEK_END);
-        file_size = ftell(fptr);
+        unsigned long file_size = ftell(fptr);
         if (file_size < sizeof(cask_header_t)) // check if file is big enough to write a header
         {
             // printf('filesize: %llu', file_size);

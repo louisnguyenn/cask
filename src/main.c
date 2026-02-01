@@ -5,7 +5,7 @@
 
 /**
  * TODO:
- * 1. create a new error message in the error and c file to inform the user to initialize the database first before choosing the other options
+ * 
  */
 int main()
 {
