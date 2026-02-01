@@ -4,6 +4,10 @@
 #include "cask.h"
 #include <stdlib.h>
 
+/**
+ * TODO:
+ * 1. fix error printing twice there is an invalid input
+ */
 int main()
 {
     cask_error_t err;
@@ -11,6 +15,7 @@ int main()
     int input = 0;
     int init_storage_flag = 0;
     char buffer[100];
+    FILE *fptr;
 
     do
     {
@@ -25,18 +30,40 @@ int main()
         printf("Enter your choice: ");
 
         fgets(buffer, sizeof(buffer), stdin);
-        
+
         err = validate_input(buffer);
         if (err != CASK_OK) // validate input
         {
             printf("Error: %s", cask_strerror(err));
         }
 
-        input = atoi(buffer); // convert to integer
+        input = atoi(buffer);       // convert to integer
+        if (input > 6 || input < 1) // check if input is in the range
+        {
+            printf("Error: %s\n", cask_strerror(7)); // return invalid input err
+            printf("\n");
+        }
 
         switch (input)
         {
         case 1:
+            if (init_storage_flag == 1) // check if storage has already been initialized
+            {
+                printf("Error: Storage already initialized\n");
+                printf("\n");
+                break;
+            }
+
+            fptr = fopen("../data/store.bin", "rb+");
+            if (fptr != NULL) // check if storage already exists
+            {
+                printf("Error: Storage already exists\n");
+                init_storage_flag = 1;
+                fclose(fptr);
+                printf("\n");
+                break;
+            }
+
             printf("Enter the number of max records: ");
             fgets(buffer, sizeof(buffer), stdin);
 
@@ -51,13 +78,15 @@ int main()
 
             if (err != CASK_OK)
             {
-                printf("Initialization failed: %s\n", cask_strerror(err));
+                printf("Error: Initialization failed, %s\n", cask_strerror(err));
             }
             else
             {
                 printf("Storage initialized successfully\n");
                 init_storage_flag = 1;
             }
+
+            printf("\n");
             break;
         case 2:
             if (init_storage_flag != 1)
@@ -65,6 +94,7 @@ int main()
                 printf("Error: %s\n", cask_strerror(8));
             }
 
+            printf("\n");
             break;
         case 3:
             if (init_storage_flag != 1)
@@ -72,6 +102,7 @@ int main()
                 printf("Error: %s\n", cask_strerror(8));
             }
 
+            printf("\n");
             break;
         case 4:
             if (init_storage_flag != 1)
@@ -79,6 +110,7 @@ int main()
                 printf("Error: %s\n", cask_strerror(8));
             }
 
+            printf("\n");
             break;
         case 5:
             if (init_storage_flag != 1)
@@ -86,6 +118,7 @@ int main()
                 printf("Error: %s\n", cask_strerror(8));
             }
 
+            printf("\n");
             break;
         case 6:
             printf("Exiting...\n");
