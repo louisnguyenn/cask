@@ -1,11 +1,17 @@
 #include "helper.h"
+#include "error.h"
 
 /**
  * validate user input
  */
-int validate_input(int input)
+cask_error_t validate_input(int input)
 {
+    if (!isdigit(input))
+    {
+        return CASK_ERR_INVALID_FORMAT;
+    }
 
+    return CASK_OK; // success
 }
 
 /**
