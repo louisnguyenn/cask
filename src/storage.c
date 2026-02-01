@@ -76,7 +76,7 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records)
         }
 
         // read version
-        printf("header version: %d\n", header.version);
+        // printf("header version: %d\n", header.version);
         if (header.version != CASK_FORMAT_VERSION)
         {
             printf("header error\n");
