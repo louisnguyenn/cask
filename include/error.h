@@ -14,7 +14,8 @@ typedef enum {
     CASK_ERR_KEY_TOO_LARGE,   // record key is too large
     CASK_ERR_VALUE_TOO_LARGE, // record value is too large
     CASK_ERR_INVALID_INPUT,   // invalid input from user
-    CASK_ERR_INIT_STORAGE     // database is not yet initialized
+    CASK_ERR_INIT_STORAGE,    // database is not yet initialized
+    CASK_ERR_RECORD_NOT_FOUND // record not found
 } cask_error_t;
 
 const char* cask_strerror(cask_error_t err);
