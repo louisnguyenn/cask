@@ -30,30 +30,29 @@ int main() {
         fgets(buffer, sizeof(buffer), stdin);
 
         err = validate_input(buffer);
-        if (err != CASK_OK) // validate input
-        {
+        // validate input
+        if (err != CASK_OK) {
             printf("Error: %s\n", cask_strerror(err));
         } else {
-            input = atoi(buffer);       // convert to integer
-            if (input > 6 || input < 1) // check if input is in the range
-            {
-                printf("Error: %s\n\n",
-                       cask_strerror(7)); // return invalid input err
+            input = atoi(buffer); // convert to integer
+            // check if input is in the range
+            if (input > 6 || input < 1) {
+                // return invalid input err
+                printf("Error: %s\n\n", cask_strerror(7));
             }
         }
 
         switch (input) {
         case 1:
-            if (init_storage_flag ==
-                1) // check if storage has already been initialized
-            {
+            // check if storage has already been initialized
+            if (init_storage_flag == 1) {
                 printf("Error: Storage already initialized\n\n");
                 break;
             }
 
             fptr = fopen("../data/store.bin", "rb+");
-            if (fptr != NULL) // check if storage already exists
-            {
+            // check if storage already exists
+            if (fptr != NULL) {
                 printf("Error: Storage already exists\n\n");
                 init_storage_flag = 1;
                 fclose(fptr);
@@ -69,8 +68,8 @@ int main() {
             }
 
             max_records = atoi(buffer); // convert to an integer
-            err = cask_storage_init("../data/store.bin",
-                                    max_records); // initialize storage
+            // initialize storage
+            err = cask_storage_init("../data/store.bin", max_records);
 
             if (err != CASK_OK) {
                 printf("Error: Initialization failed, %s\n",
