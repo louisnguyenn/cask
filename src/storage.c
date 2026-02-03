@@ -37,6 +37,7 @@ cask_error_t cask_storage_init(const char* filename, uint32_t max_records) {
         long total_size =
             sizeof(cask_header_t) +
             ((long)max_records * sizeof(cask_record_t)); // get size of file
+            
         fseek(fptr, total_size - 1, SEEK_SET);
         fputc(0, fptr); // allocate space by seeking to the end of the file and
                         // marking the 'end point' with a byte of 0
@@ -48,22 +49,22 @@ cask_error_t cask_storage_init(const char* filename, uint32_t max_records) {
          * verify magic number
          * verify version
          */
+
         // get file size
         fseek(fptr, 0, SEEK_END);
         unsigned long file_size = ftell(fptr);
-        if (file_size <
-            sizeof(
-                cask_header_t)) // check if file is big enough to write a header
-        {
+
+        // check if file is big enough to write a header
+        if (file_size < sizeof(cask_header_t)) {
             // printf('filesize: %llu', file_size);
             // printf('size of header: %llu', sizeof(cask_header_t));
             return CASK_ERR_INVALID_FORMAT;
         }
 
         fseek(fptr, 0, SEEK_SET); // seek to the beginning of the file
-        if (fread(&header, sizeof(header), 1, fptr) !=
-            1) // read header information
-        {
+
+        // read header information
+        if (fread(&header, sizeof(header), 1, fptr) != 1) {
             return CASK_ERR_IO;
         }
 
