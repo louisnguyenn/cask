@@ -16,8 +16,8 @@ cask_error_t cask_record_put(const char* key, const char* value) {
         return CASK_ERR_IO;
     }
 
-    if (fread(&header, sizeof(cask_header_t), 1, fptr) != 1) // read the header
-    {
+    // read the header
+    if (fread(&header, sizeof(cask_header_t), 1, fptr) != 1) {
         fclose(fptr);
         return CASK_ERR_IO;
     }
@@ -25,9 +25,9 @@ cask_error_t cask_record_put(const char* key, const char* value) {
     // read the record
     for (uint32_t i = 0; i < header.max_records; i += 1) {
         fread(&record, header.record_size, 1, fptr);
-        if (record.in_use == 0) // look for an empty slot to define a new record
-                                // with inputted values
-        {
+
+        // look for an empty slot to define a new record with inputted values
+        if (record.in_use == 0) {
             empty_index = i;
             break;
         }
@@ -41,22 +41,23 @@ cask_error_t cask_record_put(const char* key, const char* value) {
 
     header_size = sizeof(header);
     record_size = header.record_size;
-    offset = cask_record_offset(empty_index, header_size,
-                                record_size); // calculate offset
-    fseek(fptr, offset, SEEK_SET);            // seek to the empty record
+
+    // calculate offset
+    offset = cask_record_offset(empty_index, header_size, record_size);
+    fseek(fptr, offset, SEEK_SET); // seek to the empty record
 
     // initalize record to 0 bytes
     memset(&record, 0, sizeof(record));
 
     // update record with new values if applicable
-    if (strlen(key) >= KEY_SIZE) // validate key
-    {
+    // validate key
+    if (strlen(key) >= KEY_SIZE) {
         fclose(fptr);
         return CASK_ERR_KEY_TOO_LARGE;
     }
 
-    if (strlen(value) >= VALUE_SIZE) // validate value
-    {
+    // validate value
+    if (strlen(value) >= VALUE_SIZE) {
         fclose(fptr);
         return CASK_ERR_VALUE_TOO_LARGE;
     }
@@ -65,8 +66,8 @@ cask_error_t cask_record_put(const char* key, const char* value) {
     strcpy(record.value, value);
     record.in_use = 1; // update flag to tell db that the record is in use
 
-    fwrite(&record, header.record_size, 1,
-           fptr); // write the updated record into the database
+    // write the updated record into the database
+    fwrite(&record, header.record_size, 1, fptr);
     fclose(fptr);
 
     return CASK_OK;
@@ -90,9 +91,8 @@ cask_error_t cask_record_get(const char* key, char* out_value) {
         return CASK_ERR_IO;
     }
 
-    if (fread(&header, sizeof(cask_header_t), 1, fptr) !=
-        1) // read header information
-    {
+    // read header information
+    if (fread(&header, sizeof(cask_header_t), 1, fptr) != 1) {
         fclose(fptr);
         return CASK_ERR_IO;
     }
@@ -116,8 +116,9 @@ cask_error_t cask_record_get(const char* key, char* out_value) {
         scanf(" %c", &input);
 
         if (input == 'Y') {
+            // seek to the record
             fseek(fptr, sizeof(header) + (record_index * header.record_size),
-                  SEEK_SET); // seek to the record
+                  SEEK_SET);
 
             printf("\n");
             printf("Record Information:\n");
