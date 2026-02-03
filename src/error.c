@@ -24,6 +24,8 @@ const char* cask_strerror(cask_error_t err) {
         return "Invalid input";
     case CASK_ERR_INIT_STORAGE:
         return "Database not initialized";
+    case CASK_ERR_RECORD_NOT_FOUND:
+        return "Record not found";
     default:
         return "Unknown error";
     }
