@@ -1,24 +1,22 @@
-#include "error.h"
-#include "storage.h"
-#include "helper.h"
 #include "cask.h"
+#include "error.h"
+#include "helper.h"
+#include "storage.h"
 #include <stdlib.h>
 
 /**
  * TODO:
  * 1.
  */
-int main()
-{
+int main() {
     cask_error_t err;
     uint32_t max_records;
     int input = 0;
     int init_storage_flag = 0;
     char buffer[100];
-    FILE *fptr;
+    FILE* fptr;
 
-    do
-    {
+    do {
         printf("Welcome to Cask (C-based Atomic Storage Kernel)!\n");
         printf("Here are the options:\n");
         printf("1. Initialize database\n");
@@ -35,20 +33,19 @@ int main()
         if (err != CASK_OK) // validate input
         {
             printf("Error: %s\n", cask_strerror(err));
-        }
-        else
-        {
+        } else {
             input = atoi(buffer);       // convert to integer
             if (input > 6 || input < 1) // check if input is in the range
             {
-                printf("Error: %s\n\n", cask_strerror(7)); // return invalid input err
+                printf("Error: %s\n\n",
+                       cask_strerror(7)); // return invalid input err
             }
         }
 
-        switch (input)
-        {
+        switch (input) {
         case 1:
-            if (init_storage_flag == 1) // check if storage has already been initialized
+            if (init_storage_flag ==
+                1) // check if storage has already been initialized
             {
                 printf("Error: Storage already initialized\n\n");
                 break;
@@ -67,20 +64,18 @@ int main()
             fgets(buffer, sizeof(buffer), stdin);
 
             err = validate_input(buffer);
-            if (err != CASK_OK)
-            {
+            if (err != CASK_OK) {
                 printf("Error: %s\n", cask_strerror(err));
             }
 
-            max_records = atoi(buffer);                                // convert to an integer
-            err = cask_storage_init("../data/store.bin", max_records); // initialize storage
+            max_records = atoi(buffer); // convert to an integer
+            err = cask_storage_init("../data/store.bin",
+                                    max_records); // initialize storage
 
-            if (err != CASK_OK)
-            {
-                printf("Error: Initialization failed, %s\n", cask_strerror(err));
-            }
-            else
-            {
+            if (err != CASK_OK) {
+                printf("Error: Initialization failed, %s\n",
+                       cask_strerror(err));
+            } else {
                 printf("Storage initialized successfully\n");
                 init_storage_flag = 1;
             }
@@ -88,8 +83,7 @@ int main()
             printf("\n");
             break;
         case 2:
-            if (init_storage_flag != 1)
-            {
+            if (init_storage_flag != 1) {
                 printf("Error: %s\n\n", cask_strerror(8));
                 break;
             }
@@ -109,8 +103,7 @@ int main()
             value[strlen(value) - 1] = '\0';
 
             err = cask_record_put(key, value);
-            if (err != CASK_OK)
-            {
+            if (err != CASK_OK) {
                 printf("Error: %s\n", cask_strerror(err));
                 break;
             }
@@ -120,24 +113,21 @@ int main()
             printf("\n");
             break;
         case 3:
-            if (init_storage_flag != 1)
-            {
+            if (init_storage_flag != 1) {
                 printf("Error: %s\n", cask_strerror(8));
             }
 
             printf("\n");
             break;
         case 4:
-            if (init_storage_flag != 1)
-            {
+            if (init_storage_flag != 1) {
                 printf("Error: %s\n", cask_strerror(8));
             }
 
             printf("\n");
             break;
         case 5:
-            if (init_storage_flag != 1)
-            {
+            if (init_storage_flag != 1) {
                 printf("Error: %s\n", cask_strerror(8));
             }
 
