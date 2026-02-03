@@ -107,12 +107,11 @@ cask_error_t cask_record_get(const char* key, char* out_value) {
     }
 
     if (record_index == -1) {
-        printf("Record not found\n\n");
-        return CASK_OK;
+        return CASK_ERR_RECORD_NOT_FOUND;
     }
 
     do {
-        printf("Record found! Would you like to see its contents? [Y/n]: ");
+        printf("Record found!\n Would you like to see its contents? [Y/n]: ");
         scanf(" %c", &input);
 
         if (input == 'Y') {
@@ -121,15 +120,13 @@ cask_error_t cask_record_get(const char* key, char* out_value) {
                   SEEK_SET);
 
             printf("\n");
-            printf("Record Information:\n");
-            printf("Key: %s\n", record.key);
             strcpy(out_value, record.value);
 
-            return out_value;
+            return CASK_OK;
         } else if (input == 'n') {
             return CASK_OK;
         } else {
-            printf("Error: %s\n\n", cask_strerror(7)); // invalid input error
+            return CASK_ERR_INVALID_INPUT;
         }
     } while (input != 'n');
 

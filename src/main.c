@@ -6,15 +6,23 @@
 
 /**
  * TODO:
- * 1.
+ * 1. check if the database exists before the do while loop
  */
 int main() {
     cask_error_t err;
     uint32_t max_records;
     int input = 0;
-    int init_storage_flag = 0;
+    int init_storage_flag = -1;
     char buffer[100];
     FILE* fptr;
+
+    fptr = fopen("../data/store.bin", "rb+");
+    // check if storage already exists
+    if (fptr != NULL) {
+        printf("Error: Storage already exists\n\n");
+        init_storage_flag = 1;
+        fclose(fptr);
+    }
 
     do {
         printf("Welcome to Cask (C-based Atomic Storage Kernel)!\n");
@@ -47,15 +55,6 @@ int main() {
             // check if storage has already been initialized
             if (init_storage_flag == 1) {
                 printf("Error: Storage already initialized\n\n");
-                break;
-            }
-
-            fptr = fopen("../data/store.bin", "rb+");
-            // check if storage already exists
-            if (fptr != NULL) {
-                printf("Error: Storage already exists\n\n");
-                init_storage_flag = 1;
-                fclose(fptr);
                 break;
             }
 
@@ -113,14 +112,35 @@ int main() {
             break;
         case 3:
             if (init_storage_flag != 1) {
-                printf("Error: %s\n", cask_strerror(8));
+                printf("Error: %s\n\n", cask_strerror(8));
+                break;
             }
+
+            char search_key[KEY_SIZE];
+            char out_value[VALUE_SIZE];
+
+            printf("Enter key: ");
+            fgets(buffer, sizeof(buffer), stdin);
+            strcpy(search_key, buffer);
+            search_key[strlen(search_key) - 1] = '\0';
+
+            err = cask_record_get(search_key, out_value); // call function
+
+            // error checking
+            if (err != CASK_OK) {
+                printf("Error: %s\n\n", cask_strerror(err));
+            }
+
+            printf("Record information:\n");
+            printf("Key: %s\n", search_key);
+            printf("Value: %s\n", out_value);
 
             printf("\n");
             break;
         case 4:
             if (init_storage_flag != 1) {
                 printf("Error: %s\n", cask_strerror(8));
+                break;
             }
 
             printf("\n");
@@ -128,6 +148,7 @@ int main() {
         case 5:
             if (init_storage_flag != 1) {
                 printf("Error: %s\n", cask_strerror(8));
+                break;
             }
 
             printf("\n");
