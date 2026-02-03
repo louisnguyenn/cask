@@ -1,12 +1,11 @@
 #ifndef ERROR_H
 #define ERROR_H
 
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
 #include <stdbool.h>
-typedef enum
-{
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+typedef enum {
     CASK_OK = 0,              // operation success (0 = success, -1 = error)
     CASK_ERR_IO,              // file read/write error
     CASK_ERR_NOT_FOUND,       // key not found
@@ -18,6 +17,6 @@ typedef enum
     CASK_ERR_INIT_STORAGE     // database is not yet initialized
 } cask_error_t;
 
-const char *cask_strerror(cask_error_t err);
+const char* cask_strerror(cask_error_t err);
 
 #endif // ERROR_H
