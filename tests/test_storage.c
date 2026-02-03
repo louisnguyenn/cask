@@ -1,24 +1,22 @@
 // TEST HARNESS
 
-#include <stdio.h>
-#include <string.h>
 #include "cask.h"
-#include "storage.h"
 #include "error.h"
 #include "helper.h"
+#include "storage.h"
+#include <stdio.h>
+#include <string.h>
 
 #define TEST_DB_FILE "test_db.cask"
 
-void print_result(const char *test_name, cask_error_t res)
-{
+void print_result(const char* test_name, cask_error_t res) {
     if (res == CASK_OK)
         printf("[PASS] %s\n", test_name);
     else
         printf("[FAIL] %s (error code: %d)\n", test_name, res);
 }
 
-int main()
-{
+int main() {
     cask_error_t res;
     char value_buffer[VALUE_SIZE];
 
