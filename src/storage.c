@@ -6,10 +6,10 @@
  * initialize storage and check for valid storage if already exists
  */
 cask_error_t cask_storage_init(const char* filename, uint32_t max_records) {
-    FILE* fptr;
     cask_header_t header;
 
-    fptr = fopen(filename, "rb+"); // open file in read mode (read binary)
+    g_cask.fptr = fopen(filename, "rb+");
+    g_cask.is_open = 1;
 
     /**
      * CASE 1: if file does not exist
@@ -17,9 +17,10 @@ cask_error_t cask_storage_init(const char* filename, uint32_t max_records) {
      * write the header
      * preallocate space for records
      */
-    if (fptr == NULL) {
-        fptr = fopen(filename, "wb+"); // create a new file (write binary)
-        if (fptr == NULL) {
+    if (g_cask.fptr == NULL) {
+        g_cask.fptr =
+            fopen(filename, "wb+"); // create a new file (write binary)
+        if (g_cask.fptr == NULL) {
             return CASK_ERR_IO; // return err if file could not be created
         }
 
@@ -30,18 +31,22 @@ cask_error_t cask_storage_init(const char* filename, uint32_t max_records) {
         header.record_size = sizeof(cask_record_t);
 
         // write header
-        if (fwrite(&header, sizeof(header), 1, fptr) != 1) {
+        if (fwrite(&header, sizeof(header), 1, g_cask.fptr) != 1) {
             return CASK_ERR_IO;
         }
 
         long total_size =
             sizeof(cask_header_t) +
             ((long)max_records * sizeof(cask_record_t)); // get size of file
-            
-        fseek(fptr, total_size - 1, SEEK_SET);
-        fputc(0, fptr); // allocate space by seeking to the end of the file and
-                        // marking the 'end point' with a byte of 0
-        fflush(fptr);   // force data writing to be written in disk immediately
+
+        fseek(g_cask.fptr, total_size - 1, SEEK_SET);
+
+        // allocate space by seeking to the end of the file
+        // and marking the 'end point' with a byte of 0
+        fputc(0, g_cask.fptr);
+
+        // force data writing to be written in disk immediately
+        fflush(g_cask.fptr);
     } else {
         /**
          * CASE 2: if file exists
@@ -51,8 +56,8 @@ cask_error_t cask_storage_init(const char* filename, uint32_t max_records) {
          */
 
         // get file size
-        fseek(fptr, 0, SEEK_END);
-        unsigned long file_size = ftell(fptr);
+        fseek(g_cask.fptr, 0, SEEK_END);
+        unsigned long file_size = ftell(g_cask.fptr);
 
         // check if file is big enough to write a header
         if (file_size < sizeof(cask_header_t)) {
@@ -61,10 +66,10 @@ cask_error_t cask_storage_init(const char* filename, uint32_t max_records) {
             return CASK_ERR_INVALID_FORMAT;
         }
 
-        fseek(fptr, 0, SEEK_SET); // seek to the beginning of the file
+        fseek(g_cask.fptr, 0, SEEK_SET); // seek to the beginning of the file
 
         // read header information
-        if (fread(&header, sizeof(header), 1, fptr) != 1) {
+        if (fread(&header, sizeof(header), 1, g_cask.fptr) != 1) {
             return CASK_ERR_IO;
         }
 
@@ -82,8 +87,6 @@ cask_error_t cask_storage_init(const char* filename, uint32_t max_records) {
             return CASK_ERR_INVALID_FORMAT;
         }
     }
-
-    fclose(fptr);
 
     return CASK_OK;
 }
