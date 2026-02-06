@@ -135,6 +135,54 @@ cask_error_t cask_record_get(const char* key, char* out_value) {
 }
 
 cask_error_t cask_record_delete(const char* key) {
+    FILE* fptr;
+    cask_header_t header;
+    cask_record_t record;
+    int record_index = -1;
+    char buffer[100];
+    char input[1];
+
+    fptr = fopen("../data/store.bin", "rb+");
+    if (fptr == NULL) {
+        return CASK_ERR_IO;
+    }
+
+    // read header information
+    if (fread(&header, sizeof(cask_header_t), 1, fptr) != 1) {
+        fclose(fptr);
+        return CASK_ERR_IO;
+    }
+
+    // loop through the file to find the record
+    for (uint32_t i = 0; i < header.max_records; i += 1) {
+        fread(&record, header.record_size, 1, fptr);
+        if (strcmp(record.key, key) == 0) {
+            record_index = i;
+            break;
+        }
+    }
+
+    if (record_index == -1) {
+        return CASK_ERR_RECORD_NOT_FOUND;
+    }
+
+    do {
+        printf("Record found!\nAre you sure you want to delete the record? [Y/n]: ");
+        fgets(buffer, sizeof(buffer), stdin);
+        buffer[strlen(buffer) - 1] = '\0';
+        strcpy(input, buffer);
+
+        if (strcmp(input, "Y") == 0) {
+            // TODO: delete the record
+            
+            return CASK_OK;
+        } else if (strcmp(input, "n") == 0) {
+            return CASK_OK;
+        } else {
+            return CASK_ERR_INVALID_INPUT;
+        }
+    } while (strcmp(input, "n") != 0);
+
     return CASK_OK;
 }
 
