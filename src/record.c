@@ -141,6 +141,7 @@ cask_error_t cask_record_delete(const char* key) {
     int record_index = -1;
     char buffer[100];
     char input[1];
+    long offset = sizeof(header) + (record_index * header.record_size);
 
     fptr = fopen("../data/store.bin", "rb+");
     if (fptr == NULL) {
@@ -167,14 +168,32 @@ cask_error_t cask_record_delete(const char* key) {
     }
 
     do {
-        printf("Record found!\nAre you sure you want to delete the record? [Y/n]: ");
+        printf("Record found!\nAre you sure you want to delete the record? "
+               "[Y/n]: ");
         fgets(buffer, sizeof(buffer), stdin);
         buffer[strlen(buffer) - 1] = '\0';
         strcpy(input, buffer);
 
         if (strcmp(input, "Y") == 0) {
-            // TODO: delete the record
-            
+            if (fseek(fptr, offset, SEEK_SET) != 0) {
+                return CASK_ERR_IO;
+            }
+
+            if (fread(&record, sizeof(record), 1, fptr) != 1) {
+                return CASK_ERR_IO;
+            }
+
+            if (record.in_use == 0) {
+                // TODO: return already in use
+            }
+
+            record.in_use = 0;
+
+            // seek back to record position and overwrite the record with the
+            // new information
+            fseek(fptr, offset, SEEK_SET);
+            fwrite(&record, sizeof(record), 1, fptr);
+
             return CASK_OK;
         } else if (strcmp(input, "n") == 0) {
             return CASK_OK;
