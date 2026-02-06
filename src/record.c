@@ -25,7 +25,8 @@ cask_error_t cask_record_put(const char* key, const char* value) {
     for (uint32_t i = 0; i < header.max_records; i += 1) {
         fread(&record, header.record_size, 1, fptr);
 
-        // look for an empty slot to define a new record with inputted values
+        // look for an empty slot to define a new record with inputted
+        // values
         if (record.in_use == 0) {
             empty_index = i;
             break;
@@ -187,13 +188,13 @@ cask_error_t cask_record_delete(const char* key) {
             }
 
             if (record.in_use == 0) {
-                // TODO: return already in use
+                return CASK_ERR_EMPTY_RECORD;
             }
 
             record.in_use = 0;
 
-            // seek back to record position and overwrite the record with the
-            // new information
+            // seek back to record position and overwrite the record
+            // with the new information
             fseek(fptr, offset, SEEK_SET);
             fwrite(&record, sizeof(record), 1, fptr);
 
