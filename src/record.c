@@ -18,7 +18,6 @@ cask_error_t cask_record_put(const char* key, const char* value) {
 
     // read the header
     if (fread(&header, sizeof(cask_header_t), 1, fptr) != 1) {
-        fclose(fptr);
         return CASK_ERR_IO;
     }
 
@@ -35,7 +34,6 @@ cask_error_t cask_record_put(const char* key, const char* value) {
 
     // check if no records are found
     if (empty_index == -1) {
-        fclose(fptr);
         return CASK_ERR_FULL; // return error: db is full
     }
 
@@ -88,7 +86,6 @@ cask_error_t cask_record_get(const char* key, char* out_value) {
 
     // read header information
     if (fread(&header, sizeof(cask_header_t), 1, fptr) != 1) {
-        fclose(fptr);
         return CASK_ERR_IO;
     }
 
@@ -105,6 +102,9 @@ cask_error_t cask_record_get(const char* key, char* out_value) {
         return CASK_ERR_RECORD_NOT_FOUND;
     }
 
+    long offset =
+        cask_record_offset(record_index, sizeof(header), header.record_size);
+
     do {
         printf("Record found!\nWould you like to see its contents? [Y/n]: ");
         fgets(buffer, sizeof(buffer), stdin);
@@ -113,8 +113,9 @@ cask_error_t cask_record_get(const char* key, char* out_value) {
 
         if (strcmp(input, "Y") == 0) {
             // seek to the record
-            fseek(fptr, sizeof(header) + (record_index * header.record_size),
-                  SEEK_SET);
+            if (fseek(fptr, offset, SEEK_SET) != 0) {
+                return CASK_ERR_IO;
+            }
 
             printf("\n");
             strcpy(out_value, record.value);
@@ -141,7 +142,6 @@ cask_error_t cask_record_delete(const char* key) {
     int record_index = -1;
     char buffer[100];
     char input[1];
-    long offset = sizeof(header) + (record_index * header.record_size);
 
     fptr = fopen("../data/store.bin", "rb+");
     if (fptr == NULL) {
@@ -166,6 +166,9 @@ cask_error_t cask_record_delete(const char* key) {
     if (record_index == -1) {
         return CASK_ERR_RECORD_NOT_FOUND;
     }
+
+    long offset =
+        cask_record_offset(record_index, sizeof(header), header.record_size);
 
     do {
         printf("Record found!\nAre you sure you want to delete the record? "
