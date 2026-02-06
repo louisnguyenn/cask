@@ -19,13 +19,12 @@ int main() {
     fptr = fopen("../data/store.bin", "rb+");
     // check if storage already exists
     if (fptr != NULL) {
-        printf("Error: Storage already exists\n\n");
         init_storage_flag = 1;
         fclose(fptr);
     }
 
+    printf("Welcome to Cask (C-based Atomic Storage Kernel)!\n");
     do {
-        printf("Welcome to Cask (C-based Atomic Storage Kernel)!\n");
         printf("Here are the options:\n");
         printf("1. Initialize database\n");
         printf("2. Create a record\n");
@@ -130,10 +129,6 @@ int main() {
             if (err != CASK_OK) {
                 printf("Error: %s\n\n", cask_strerror(err));
             }
-
-            printf("Record information:\n");
-            printf("Key: %s\n", search_key);
-            printf("Value: %s\n", out_value);
 
             printf("\n");
             break;
