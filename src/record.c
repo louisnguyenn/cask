@@ -151,7 +151,6 @@ cask_error_t cask_record_delete(const char* key) {
 
     // read header information
     if (fread(&header, sizeof(cask_header_t), 1, fptr) != 1) {
-        fclose(fptr);
         return CASK_ERR_IO;
     }
 
@@ -210,5 +209,7 @@ cask_error_t cask_record_delete(const char* key) {
 }
 
 cask_error_t cask_storage_close() {
+    
+
     return CASK_OK;
 }

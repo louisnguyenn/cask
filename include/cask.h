@@ -4,6 +4,14 @@
 #include "error.h"
 #include <stdint.h>
 
+typedef struct {
+    FILE* fptr;
+    cask_header_t header;
+    int is_open;
+} cask_storage_t;
+
+extern cask_storage_t g_cask;
+
 /**
  * initialize storage function
  * parameters: filename/name of the database, max number of records
