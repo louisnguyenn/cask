@@ -138,6 +138,20 @@ int main() {
                 break;
             }
 
+            printf("Enter key: ");
+            fgets(buffer, sizeof(buffer), stdin);
+            buffer[strlen(buffer) - 1] = '\0';
+
+            char search_key[KEY_SIZE];
+            strcpy(search_key, buffer);
+
+            err = cask_record_delete(search_key);
+            if (err != CASK_OK) {
+                printf("Error: %s\n", cask_strerror(err));
+            } else {
+                printf("Record deleted successfully\n");
+            }
+
             printf("\n");
             break;
         case 5:
