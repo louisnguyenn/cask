@@ -5,12 +5,12 @@
 #include <stdint.h>
 
 typedef struct {
-    FILE* fptr;
-    cask_header_t header;
-    int is_open;
+    FILE* fptr;           // file pointer
+    cask_header_t header; // storage header
+    int is_open;          // is open flag
 } cask_storage_t;
 
-extern cask_storage_t g_cask;
+extern cask_storage_t g_cask; // global variable
 
 /**
  * initialize storage function
