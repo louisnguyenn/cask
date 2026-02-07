@@ -1,19 +1,22 @@
 #include "helper.h"
 #include "error.h"
+#include <ctype.h>
+#include <string.h>
+#include <stdint.h>
 
 /**
  * validate user input
  */
 cask_error_t validate_input(char *input)
 {
-  int i = 0;
+  int chr = 0;
 
   input[strlen(input) - 1] = '\0';// remove newline character
-  while (!(input[i] == '\0')) {
+  while (!(input[chr] == '\0')) {
     // printf("input: %c", input[i]);
-    if (!isdigit(input[i])) { return CASK_ERR_INVALID_INPUT; }
+    if (!isdigit(input[chr])) { return CASK_ERR_INVALID_INPUT; }
 
-    i += 1;
+    chr += 1;
   }
 
   return CASK_OK;// success

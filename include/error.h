@@ -1,10 +1,5 @@
 #ifndef ERROR_H
 #define ERROR_H
-
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 typedef enum {
   CASK_OK = 0,// operation success (0 = success, -1 = error)
   CASK_ERR_IO,// file read/write error

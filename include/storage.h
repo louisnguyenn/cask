@@ -9,6 +9,7 @@
 #define KEY_SIZE 32
 #define VALUE_SIZE 128
 #define CASK_FORMAT_VERSION 1// define version
+#define BUFFER_SIZE 100
 
 /**
  * define storage file layout
