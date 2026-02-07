@@ -1,23 +1,12 @@
-CC = gcc
-CFLAGS = -std=c11 -Wall -Wextra -pedantic -g
-INCLUDE = -I./include
-SRC = src/main.c src/storage.c src/record.c src/error.c
-OBJ = ${SRC:src/%.c=build/%.o}
-TARGET = build/cask
+IMAGE_NAME=cask-dev
+CONTAINER_NAME=cask-container
 
-all: $(TARGET)
+docker-build:
+	docker build -f .devcontainer/Dockerfile -t $(IMAGE_NAME) .
 
-build/cask: $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET)
+docker-run:
+	docker run -it --name $(CONTAINER_NAME) -v $(PWD):/app $(IMAGE_NAME)
 
-build/%.o: src/%.c
-	@mkdir -p build
-	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
-
-clean:
-	rm -rf build
-
-run: all
-	./$(TARGET)
-
-.PHONY: all clean run
+docker-clean:
+	docker rm -f $(CONTAINER_NAME) || true
+	docker rmi $(IMAGE_NAME) || true
