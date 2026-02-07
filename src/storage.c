@@ -251,8 +251,6 @@ cask_error_t cask_storage_close(void)
 
   if (fclose(g_cask.fptr) != 0) { return CASK_ERR_IO; }
 
-  fflush(g_cask.fptr);
-  fclose(g_cask.fptr);
   g_cask.fptr = NULL;
   g_cask.is_open = 0;
 
