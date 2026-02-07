@@ -1,0 +1,16 @@
+{
+  "name": "Cask Dev Environment",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "workspaceFolder": "/app",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "llvm-vs-code-extensions.vscode-clangd",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  }
+}
