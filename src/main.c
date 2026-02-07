@@ -4,10 +4,6 @@
 #include "storage.h"
 #include <stdlib.h>
 
-/**
- * TODO:
- * 1. check if the database exists before the do while loop
- */
 int main() {
     cask_error_t err;
     uint32_t max_records;
@@ -169,9 +165,10 @@ int main() {
             break;
         case 6:
             if (g_cask.is_open != 0) {
-                printf("Error: "); // TODO: create error 
+                printf("Error: %s\n", strerror(err));
+            } else {
+                printf("Exiting...\n");
             }
-            printf("Exiting...\n");
         }
     } while (input != 6);
 
