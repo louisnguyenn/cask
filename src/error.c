@@ -30,6 +30,8 @@ const char* cask_strerror(cask_error_t err) {
         return "Record already empty";
     case CASK_ERR_NOT_OPEN:
         return "Cannot close an uninitialized storage";
+    case CASK_ERR_CLOSE_STORAGE:
+        return "Please close the storage before exiting";
     default:
         return "Unknown error";
     }

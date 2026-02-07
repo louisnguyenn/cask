@@ -17,7 +17,8 @@ typedef enum {
     CASK_ERR_INIT_STORAGE,     // database is not yet initialized
     CASK_ERR_RECORD_NOT_FOUND, // record not found
     CASK_ERR_EMPTY_RECORD,     // record in use
-    CASK_ERR_NOT_OPEN          // storage is not open
+    CASK_ERR_NOT_OPEN,         // storage is not open
+    CASK_ERR_CLOSE_STORAGE     // close storage before exiting
 } cask_error_t;
 
 const char* cask_strerror(cask_error_t err);
