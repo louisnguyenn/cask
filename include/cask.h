@@ -42,6 +42,6 @@ cask_error_t cask_record_delete(const char *key);
  * clean/close the storage function
  * parameters: none
  */
-cask_error_t cask_storage_close();
+cask_error_t cask_storage_close(void);
 
 #endif// CASK_H

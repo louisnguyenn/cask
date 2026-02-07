@@ -250,7 +250,7 @@ cask_error_t cask_record_delete(const char *key)
   return CASK_OK;
 }
 
-cask_error_t cask_storage_close()
+cask_error_t cask_storage_close(void)
 {
   if (g_cask.is_open != 1) { return CASK_ERR_NOT_OPEN; }
 
