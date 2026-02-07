@@ -165,7 +165,7 @@ int main() {
             break;
         case 6:
             if (g_cask.is_open != 0) {
-                printf("Error: %s\n", strerror(err));
+                printf("Error: %s\n", strerror(12));
             } else {
                 printf("Exiting...\n");
             }
