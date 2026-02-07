@@ -52,6 +52,7 @@ Designed to emphasize memory safety, deterministic data layout, low-level file I
 - build/ → compiled objects and final executable (ignored in git)
 
 ## Build Instructions
+Build with CMake:
 ```bash
 mkdir build
 cd build  
@@ -60,7 +61,7 @@ cmake --build .
 make
 ```
 
-## Run
+Run:
 ```bash
 ./cask
 ```
