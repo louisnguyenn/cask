@@ -14,13 +14,11 @@ int main() {
     int input = 0;
     int init_storage_flag = -1;
     char buffer[100];
-    FILE* fptr;
 
-    fptr = fopen("../data/store.bin", "rb+");
+    g_cask.fptr = fopen("../data/store.bin", "rb+");
     // check if storage already exists
-    if (fptr != NULL) {
+    if (g_cask.fptr != NULL) {
         init_storage_flag = 1;
-        fclose(fptr);
     }
 
     printf("Welcome to Cask (C-based Atomic Storage Kernel)!\n");
@@ -160,9 +158,19 @@ int main() {
                 break;
             }
 
+            err = cask_storage_close();
+            if (err != CASK_OK) {
+                printf("Error: %s\n", strerror(err));
+            } else {
+                printf("Storage closed successfully\n");
+            }
+
             printf("\n");
             break;
         case 6:
+            if (g_cask.is_open != 0) {
+                printf("Error: "); // TODO: create error 
+            }
             printf("Exiting...\n");
         }
     } while (input != 6);
