@@ -10,6 +10,8 @@ int main() {
     int input = 0;
     int init_storage_flag = -1;
     char buffer[100];
+    char search_key[KEY_SIZE];
+    char out_value[VALUE_SIZE];
 
     g_cask.fptr = fopen("../data/store.bin", "rb+");
     // check if storage already exists
@@ -109,9 +111,6 @@ int main() {
                 break;
             }
 
-            char search_key[KEY_SIZE];
-            char out_value[VALUE_SIZE];
-
             printf("Enter key: ");
             fgets(buffer, sizeof(buffer), stdin);
             strcpy(search_key, buffer);
@@ -136,7 +135,6 @@ int main() {
             fgets(buffer, sizeof(buffer), stdin);
             buffer[strlen(buffer) - 1] = '\0';
 
-            char search_key[KEY_SIZE];
             strcpy(search_key, buffer);
 
             err = cask_record_delete(search_key);
