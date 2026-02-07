@@ -6,10 +6,9 @@
  * initialize storage and check for valid storage if already exists
  */
 cask_error_t cask_storage_init(const char* filename, uint32_t max_records) {
-    cask_header_t header;
+    cask_storage_t g_cask = {0};
 
     g_cask.fptr = fopen(filename, "rb+");
-    g_cask.is_open = 1;
 
     /**
      * CASE 1: if file does not exist
@@ -25,28 +24,24 @@ cask_error_t cask_storage_init(const char* filename, uint32_t max_records) {
         }
 
         // initalize header
-        memcpy(header.magic, "CSK1", sizeof(char) * MAGIC_STRING_SIZE);
-        header.version = CASK_FORMAT_VERSION; // version 1
-        header.max_records = max_records;
-        header.record_size = sizeof(cask_record_t);
+        memcpy(g_cask.header.magic, "CSK1", sizeof(char) * MAGIC_STRING_SIZE);
+        g_cask.header.version = CASK_FORMAT_VERSION; // version 1
+        g_cask.header.max_records = max_records;
+        g_cask.header.record_size = sizeof(cask_record_t);
 
         // write header
-        if (fwrite(&header, sizeof(header), 1, g_cask.fptr) != 1) {
+        if (fwrite(&g_cask.header, sizeof(g_cask.header), 1, g_cask.fptr) !=
+            1) {
             return CASK_ERR_IO;
         }
 
-        long total_size =
-            sizeof(cask_header_t) +
-            ((long)max_records * sizeof(cask_record_t)); // get size of file
+        // initalize empty records
+        cask_record_t empty_record;
+        memset(&empty_record, 0, sizeof(empty_record));
 
-        fseek(g_cask.fptr, total_size - 1, SEEK_SET);
-
-        // allocate space by seeking to the end of the file
-        // and marking the 'end point' with a byte of 0
-        fputc(0, g_cask.fptr);
-
-        // force data writing to be written in disk immediately
-        fflush(g_cask.fptr);
+        for (uint32_t i = 0; i < max_records; i += 1) {
+            fwrite(&empty_record, sizeof(empty_record), 1, g_cask.fptr);
+        }
     } else {
         /**
          * CASE 2: if file exists
@@ -69,24 +64,27 @@ cask_error_t cask_storage_init(const char* filename, uint32_t max_records) {
         fseek(g_cask.fptr, 0, SEEK_SET); // seek to the beginning of the file
 
         // read header information
-        if (fread(&header, sizeof(header), 1, g_cask.fptr) != 1) {
+        if (fread(&g_cask.header, sizeof(g_cask.header), 1, g_cask.fptr) != 1) {
             return CASK_ERR_IO;
         }
 
         // read magic number identifier
         // printf("header magic: %s\n", header.magic);
-        if (memcmp(header.magic, "CSK1", MAGIC_STRING_SIZE) != 0) {
+        if (memcmp(g_cask.header.magic, "CSK1", MAGIC_STRING_SIZE) != 0) {
             printf("magic error\n");
             return CASK_ERR_INVALID_FORMAT;
         }
 
         // read version
         // printf("header version: %d\n", header.version);
-        if (header.version != CASK_FORMAT_VERSION) {
+        if (g_cask.header.version != CASK_FORMAT_VERSION) {
             printf("header error\n");
             return CASK_ERR_INVALID_FORMAT;
         }
     }
+
+    fseek(g_cask.fptr, 0, SEEK_SET); // seek back to the beginning of file
+    g_cask.is_open = 1;
 
     return CASK_OK;
 }
