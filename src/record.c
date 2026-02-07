@@ -191,7 +191,7 @@ cask_error_t cask_record_delete(const char* key) {
 
 cask_error_t cask_storage_close() {
     if (g_cask.is_open != 1) {
-        return CASK_ERR_NOT_OPEN; // TODO: create error for already open
+        return CASK_ERR_NOT_OPEN;
     }
 
     fflush(g_cask.fptr);
