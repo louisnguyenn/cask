@@ -3,6 +3,8 @@
 #include "helper.h"
 #include "storage.h"
 
+cask_storage_t g_cask = {0};
+
 cask_error_t cask_record_put(const char* key, const char* value) {
     cask_record_t record;
     int empty_index = -1;
