@@ -2,6 +2,7 @@
 #define CASK_H
 
 #include "error.h"
+#include "storage.h"
 #include <stdint.h>
 
 typedef struct {
