@@ -15,7 +15,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake clang clang-tidy build-essential
+        sudo apt-get install -y cmake gcc clang clang-tidy build-essential valgrind
 
     - name: Configure
       run: cmake -S . -B build
@@ -25,3 +25,9 @@ jobs:
 
     - name: Run clang-tidy
       run: clang-tidy src/*.c -- -Iinclude
+
+    - name: Run unit tests
+      run: ctest --test-dir build --output-on-failure
+
+    - name: Run tests with valgrind
+      run: valgrind --leak-check=full ctest --test-dir build
