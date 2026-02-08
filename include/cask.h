@@ -3,14 +3,13 @@
 
 #include "error.h"
 #include "storage.h"
-typedef struct
-{
-  FILE *fptr;// file pointer
-  cask_header_t header;// storage header
-  int is_open;// is open flag (0 = close, 1 = open)
+typedef struct {
+  FILE *fptr;           // file pointer
+  cask_header_t header; // storage header
+  int is_open;          // is open flag (0 = close, 1 = open)
 } cask_storage_t;
 
-extern cask_storage_t g_cask;// global variable
+extern cask_storage_t g_cask; // global variable
 
 /**
  * initialize storage function
@@ -42,4 +41,4 @@ cask_error_t cask_record_delete(const char *key);
  */
 cask_error_t cask_storage_close(void);
 
-#endif// CASK_H
+#endif // CASK_H

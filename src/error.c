@@ -4,8 +4,7 @@
  * this function defines each error case and returns readable messages for
  * debugging
  */
-const char *cask_strerror(cask_error_t err)
-{
+const char *cask_strerror(cask_error_t err) {
   switch (err) {
   case CASK_OK:
     return "Success";

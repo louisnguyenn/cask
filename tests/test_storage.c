@@ -4,8 +4,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-int main()
-{
+int main() {
   cask_error_t res;
 
   res = cask_storage_init("test.db", 10);

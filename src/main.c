@@ -4,8 +4,7 @@
 #include "storage.h"
 #include <stdlib.h>
 
-int main()
-{
+int main() {
   cask_error_t err;
   uint32_t max_records;
   int input = 0;
@@ -16,7 +15,9 @@ int main()
 
   g_cask.fptr = fopen("../data/store.bin", "rb+");
   // check if storage already exists
-  if (g_cask.fptr != NULL) { init_storage_flag = 1; }
+  if (g_cask.fptr != NULL) {
+    init_storage_flag = 1;
+  }
 
   printf("Welcome to Cask (C-based Atomic Storage Kernel)!\n");
   do {
@@ -36,7 +37,7 @@ int main()
     if (err != CASK_OK) {
       printf("Error: %s\n", cask_strerror(err));
     } else {
-      input = atoi(buffer);// convert to integer
+      input = atoi(buffer); // convert to integer
       // check if input is in the range
       if (input > 6 || input < 1) {
         // return invalid input err
@@ -56,9 +57,11 @@ int main()
       fgets(buffer, sizeof(buffer), stdin);
 
       err = validate_input(buffer);
-      if (err != CASK_OK) { printf("Error: %s\n", cask_strerror(err)); }
+      if (err != CASK_OK) {
+        printf("Error: %s\n", cask_strerror(err));
+      }
 
-      max_records = atoi(buffer);// convert to an integer
+      max_records = atoi(buffer); // convert to an integer
       // initialize storage
       err = cask_storage_init("../data/store.bin", max_records);
 
@@ -112,10 +115,12 @@ int main()
       strcpy(search_key, buffer);
       search_key[strlen(search_key) - 1] = '\0';
 
-      err = cask_record_get(search_key, out_value);// call function
+      err = cask_record_get(search_key, out_value); // call function
 
       // error checking
-      if (err != CASK_OK) { printf("Error: %s\n\n", cask_strerror(err)); }
+      if (err != CASK_OK) {
+        printf("Error: %s\n\n", cask_strerror(err));
+      }
 
       printf("\n");
       break;
