@@ -1,6 +1,5 @@
 #include "cask.h"
 #include "error.h"
-#include "storage.h"
 #include <assert.h>
 #include <stdio.h>
 
