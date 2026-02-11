@@ -43,7 +43,9 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records) {
     memset(&empty_record, 0, sizeof(empty_record));
 
     for (uint32_t i = 0; i < max_records; i += 1) {
-      fwrite(&empty_record, sizeof(empty_record), 1, g_cask.fptr);
+      if (fwrite(&empty_record, sizeof(empty_record), 1, g_cask.fptr) != 0) {
+        return CASK_ERR_IO;
+      }
     }
   } else {
     /**
@@ -54,7 +56,10 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records) {
      */
 
     // get file size
-    fseek(g_cask.fptr, 0, SEEK_END);
+    if (fseek(g_cask.fptr, 0, SEEK_END) != 0) {
+      return CASK_ERR_IO;
+    }
+
     unsigned long file_size = ftell(g_cask.fptr);
 
     // check if file is big enough to write a header
@@ -64,7 +69,9 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records) {
       return CASK_ERR_INVALID_FORMAT;
     }
 
-    fseek(g_cask.fptr, 0, SEEK_SET);
+    if (fseek(g_cask.fptr, 0, SEEK_SET) != 0) {
+      return CASK_ERR_IO;
+    }
 
     // read header information
     if (fread(&g_cask.header, sizeof(g_cask.header), 1, g_cask.fptr) != 1) {
@@ -98,11 +105,15 @@ cask_error_t cask_record_put(const char *key, const char *value) {
   uint32_t header_size = 0;
   uint32_t record_size = 0;
 
-  fseek(g_cask.fptr, sizeof(cask_header_t), SEEK_SET);
+  if (fseek(g_cask.fptr, sizeof(cask_header_t), SEEK_SET) != 0) {
+    return CASK_ERR_IO;
+  }
 
   // read the record
   for (uint32_t i = 0; i < g_cask.header.max_records; i += 1) {
-    fread(&record, g_cask.header.record_size, 1, g_cask.fptr);
+    if (fread(&record, g_cask.header.record_size, 1, g_cask.fptr) != 0) {
+      return CASK_ERR_IO;
+    }
 
     // look for an empty slot to define a new record with inputted
     // values
@@ -122,7 +133,9 @@ cask_error_t cask_record_put(const char *key, const char *value) {
 
   // calculate offset
   offset = cask_record_offset(empty_index, header_size, record_size);
-  fseek(g_cask.fptr, offset, SEEK_SET); // seek to the empty record
+  if (fseek(g_cask.fptr, offset, SEEK_SET) != 0) {
+    return CASK_ERR_IO;
+  } // seek to the empty record
 
   // initalize record to 0 bytes
   memset(&record, 0, sizeof(record));
@@ -143,7 +156,9 @@ cask_error_t cask_record_put(const char *key, const char *value) {
   record.in_use = 1; // update flag to tell db that the record is in use
 
   // write the updated record into the database
-  fwrite(&record, g_cask.header.record_size, 1, g_cask.fptr);
+  if (fwrite(&record, g_cask.header.record_size, 1, g_cask.fptr) != 0) {
+    return CASK_ERR_IO;
+  }
 
   return CASK_OK;
 }
@@ -154,11 +169,16 @@ cask_error_t cask_record_get(const char *key, char *out_value) {
   char buffer[BUFFER_SIZE];
   char input = 0;
 
-  fseek(g_cask.fptr, sizeof(cask_header_t), SEEK_SET);
+  if (fseek(g_cask.fptr, sizeof(cask_header_t), SEEK_SET) != 0) {
+    return CASK_ERR_IO;
+  }
 
   // loop through the file to find the record
   for (uint32_t i = 0; i < g_cask.header.max_records; i += 1) {
-    fread(&record, g_cask.header.record_size, 1, g_cask.fptr);
+    if (fread(&record, g_cask.header.record_size, 1, g_cask.fptr) != 0) {
+      return CASK_ERR_IO;
+    }
+
     if (strcmp(record.key, key) == 0 && record.in_use) {
       record_index = i;
       break;
@@ -174,7 +194,10 @@ cask_error_t cask_record_get(const char *key, char *out_value) {
 
   do {
     printf("Record found!\nWould you like to see its contents? [Y/n]: ");
-    fgets(buffer, sizeof(buffer), stdin);
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+      return CASK_ERR_INVALID_INPUT;
+    }
+
     input = buffer[0];
 
     if (input == 'Y') {
@@ -207,11 +230,16 @@ cask_error_t cask_record_delete(const char *key) {
   char buffer[BUFFER_SIZE];
   char input = 0;
 
-  fseek(g_cask.fptr, sizeof(cask_header_t), SEEK_SET);
+  if (fseek(g_cask.fptr, sizeof(cask_header_t), SEEK_SET) != 0) {
+    return CASK_ERR_IO;
+  }
 
   // loop through the file to find the record
   for (uint32_t i = 0; i < g_cask.header.max_records; i += 1) {
-    fread(&record, g_cask.header.record_size, 1, g_cask.fptr);
+    if (fread(&record, g_cask.header.record_size, 1, g_cask.fptr) != 0) {
+      return CASK_ERR_IO;
+    }
+
     if (strcmp(record.key, key) == 0 && record.in_use) {
       record_index = i;
       break;
@@ -228,7 +256,9 @@ cask_error_t cask_record_delete(const char *key) {
   do {
     printf("Record found!\nAre you sure you want to delete the record? "
            "[Y/n]: ");
-    fgets(buffer, sizeof(buffer), stdin);
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+      return CASK_ERR_INVALID_INPUT;
+    }
     input = buffer[0];
 
     if (input == 'Y') {
@@ -248,8 +278,13 @@ cask_error_t cask_record_delete(const char *key) {
 
       // seek back to record position and overwrite the record
       // with the new information
-      fseek(g_cask.fptr, offset, SEEK_SET);
-      fwrite(&record, sizeof(record), 1, g_cask.fptr);
+      if (fseek(g_cask.fptr, offset, SEEK_SET) != 0) {
+        return CASK_ERR_IO;
+      }
+
+      if (fwrite(&record, sizeof(record), 1, g_cask.fptr) != 0) {
+        return CASK_ERR_IO;
+      }
 
       return CASK_OK;
     } else if (input == 'n') {
