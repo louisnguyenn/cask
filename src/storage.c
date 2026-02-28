@@ -42,7 +42,7 @@ cask_error_t cask_storage_init(const char *filename, uint32_t max_records) {
     cask_record_t empty_record;
     memset(&empty_record, 0, sizeof(empty_record));
 
-    for (uint32_t i = 0; i < max_records; i += 1) {
+    for (size_t i = 0; i < max_records; i++) {
       if (fwrite(&empty_record, sizeof(empty_record), 1, g_cask.fptr) != 0) {
         return CASK_ERR_IO;
       }
@@ -110,7 +110,7 @@ cask_error_t cask_record_put(const char *key, const char *value) {
   }
 
   // read the record
-  for (uint32_t i = 0; i < g_cask.header.max_records; i += 1) {
+  for (size_t i = 0; i < g_cask.header.max_records; i++) {
     if (fread(&record, g_cask.header.record_size, 1, g_cask.fptr) != 0) {
       return CASK_ERR_IO;
     }
@@ -174,7 +174,7 @@ cask_error_t cask_record_get(const char *key, char *out_value) {
   }
 
   // loop through the file to find the record
-  for (uint32_t i = 0; i < g_cask.header.max_records; i += 1) {
+  for (size_t i = 0; i < g_cask.header.max_records; i++) {
     if (fread(&record, g_cask.header.record_size, 1, g_cask.fptr) != 0) {
       return CASK_ERR_IO;
     }
@@ -235,7 +235,7 @@ cask_error_t cask_record_delete(const char *key) {
   }
 
   // loop through the file to find the record
-  for (uint32_t i = 0; i < g_cask.header.max_records; i += 1) {
+  for (size_t i = 0; i < g_cask.header.max_records; i++) {
     if (fread(&record, g_cask.header.record_size, 1, g_cask.fptr) != 0) {
       return CASK_ERR_IO;
     }
@@ -246,7 +246,7 @@ cask_error_t cask_record_delete(const char *key) {
     }
   }
 
-  if (record_index == (uint32_t)-1) {
+  if ((int)record_index == -1) {
     return CASK_ERR_RECORD_NOT_FOUND;
   }
 
